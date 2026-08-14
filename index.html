@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- 2026-08-14 UI 재설계: maximum-scale=1 을 뺐다. 확대를 막으면 고령·저시력
+     사용자가 글자를 키울 수 없다(WCAG 1.4.4 리사이즈). 이 서비스의 주 사용자층을
+     생각하면 확대 금지는 그대로 둘 수 없는 설정이다. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 2026-08-14: 제출 전 배포본이므로 검색엔진 색인을 막는다. 심사 URL 은 링크를
+     아는 사람이 열면 되고(공고상 요구는 '접근 가능'이지 '검색 노출'이 아니다),
+     색인되면 내려도 캐시가 남는다. 제출 확정 후 필요하면 이 두 줄과
+     robots.txt 를 뺀다. -->
+<meta name="robots" content="noindex, nofollow">
+<title>보이스피싱 대응 안내 (MVP)</title>
+<!-- 파비콘 요청으로 콘솔에 404가 찍히던 것을 빈 데이터 URI로 막는다. 외부 파일을
+     받아오지 않는다(CDN 0 원칙 유지). 심사자가 개발자도구를 열었을 때 빨간 404가
+     보이지 않게 하는 목적이다. -->
+<link rel="icon" href="data:,">
+<!-- 2026-08-14 정적 배포본(지시 27e9e4): 보안 정책을 meta 로 건다.
+     GitHub Pages 는 응답 헤더를 우리가 정할 수 없어 CSP 를 헤더로 못 보낸다 —
+     meta 로 거는 것이 이 호스팅에서 가능한 최대치다.
+     default-src 'none' 이므로 이 페이지는 **외부로 어떤 요청도 보낼 수 없다**
+     (fetch·XHR·비콘·외부 폰트·외부 이미지·분석 스크립트 전부 차단). 붙여넣은
+     문자가 밖으로 나갈 경로가 정책 차원에서 막힌다.
+     🚨 style-src 에 'unsafe-inline' 이 있는 이유(정직 고지): 질문 진행바가
+     style="width:NN%" 인라인 속성을 쓴다. CSP 는 인라인 style 속성도 막기
+     때문에 이걸 빼면 진행바가 사라진다. script 쪽에는 'unsafe-inline' 이 없다. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div id="banner" class="banner">
+  본 서비스는 공식 기관이 아니며 안내 도구입니다. 신고·구제는 112/1332/금융회사
+</div>
+
+<header class="app-header">
+  <h1>보이스피싱 대응 안내</h1>
+  <p class="app-header-sub">(서비스명 확정 전 · MVP)</p>
+</header>
+
+<main id="app">
+
+  <!-- 첫 화면 -->
+  <section id="screen-home" class="screen">
+    <!-- 2026-08-12 어스2 수리(P0): 통화 중단·송금 중단을 첫 화면 최상단에 고정
+         2026-08-14: 문구 그대로. 배너를 남색으로 내려 이 블록이 첫 화면에서
+         유일한 빨강이 되게 했다(위계). -->
+    <p class="home-warning">
+      지금 의심스러운 통화를 하는 중이라면 <strong>먼저 전화를 끊으십시오.</strong>
+      송금·이체는 잠시 멈추십시오.
+    </p>
+    <p class="choose-label">지금 상황에 가까운 쪽을 고르십시오</p>
+    <button type="button" id="btn-go-flow" class="big-btn big-btn-primary">
+      지금 피해가 의심돼요
+    </button>
+    <button type="button" id="btn-go-explain" class="big-btn big-btn-secondary">
+      이 문자/통화가 수상해요
+    </button>
+  </section>
+
+  <!-- 상황 파악 흐름 -->
+  <section id="screen-flow" class="screen hidden">
+    <div id="flow-questions"></div>
+    <div id="flow-result" aria-live="polite"></div>
+    <button type="button" id="btn-flow-restart" class="link-btn hidden">처음으로</button>
+  </section>
+
+  <!-- 위험 신호 설명 -->
+  <section id="screen-explain" class="screen hidden">
+    <!-- 2026-08-12 어스2 수리(Kimi): "통화"는 붙여넣을 수 없으므로 입력 방법 안내 -->
+    <label for="explain-textarea" class="field-label">
+      의심되는 문자 내용을 붙여넣으세요. 통화였다면 기억나는 내용을 그대로 적어주세요
+    </label>
+    <p class="input-warning" id="input-warning"></p>
+    <textarea id="explain-textarea" maxlength="2000" rows="6"
+      placeholder="예: [해외발신] 고객님 계정이 정지되었습니다..."></textarea>
+    <div class="char-count"><span id="explain-char-count">0</span> / 2000자</div>
+    <button type="button" id="btn-explain-submit" class="big-btn big-btn-primary">
+      위험 신호 확인
+    </button>
+    <div id="explain-result" aria-live="polite"></div>
+    <button type="button" id="btn-explain-back" class="link-btn">처음으로</button>
+  </section>
+
+</main>
+
+<footer id="contacts-footer" class="contacts-footer"></footer>
+
+<!-- 2026-08-14 정적 배포본: 서버 API 대신 아래 두 파일이 계산을 맡는다.
+     순서 중요 — app.js 가 CLASSIFY_TABLE 과 explain() 을 쓴다.
+     경로는 절대(/static/…)에서 상대(./)로 바꿨다. GitHub Pages 는 저장소
+     하위 경로(/<repo>/)로 서비스되므로 절대경로면 CSS·JS 가 404 가 된다. -->
+<script src="./data/classify_table.js"></script>
+<script src="./rules.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
