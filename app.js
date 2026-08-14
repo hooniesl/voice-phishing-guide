@@ -1,7 +1,7 @@
 "use strict";
 
 /* 보이스피싱 대응 안내 MVP — 프론트엔드.
-   서버(content.py)와 동일한 정적 문구만 여기서도 하드코딩한다(SPEC.md 4-3절
+ 서버 쪽 분류 로직과 동일한 정적 문구만 여기서도 하드코딩한다(기능 명세 4-3절
    범위 — 별도 콘텐츠 API는 스펙에 없다). 사용자 입력은 전부 textContent로만
    넣는다(innerHTML에 사용자 입력을 넣지 않는다 — XSS 방지).
 */
@@ -10,17 +10,17 @@ const MAX_EXPLAIN_LEN = 2000;
 // (정적 배포본에는 fetch 가 없어 FETCH_TIMEOUT_MS 를 뺐다 — 쓰지 않는 상수를
 //  남겨두면 "네트워크 호출이 어딘가 있다"는 오해를 만든다.)
 
-// 2026-08-12 어스2 수리: 비저장 사실 고지 추가(서버는 입력을 저장하지 않는다 —
-// server.py 비저장 원칙과 일치). 문구는 content.py INPUT_WARNING과 동일 유지.
+// 2026-08-12 외부 검토 반영: 비저장 사실 고지 추가(서버는 입력을 저장하지 않는다 —
+// 서버 원본 비저장 원칙과 일치). 문구는 분류 로직 원본의 같은 상수과 동일 유지.
 const INPUT_WARNING_TEXT =
   "이름·계좌번호·주민등록번호 등 개인정보를 입력하지 마세요. 입력 내용은 저장되지 않습니다.";
 
-// 연결 실패·서버 오류 시 공통으로 붙이는 대체 행동 안내(어스2 수리, 경로8 —
+// 연결 실패·서버 오류 시 공통으로 붙이는 대체 행동 안내(외부 검토 반영, 경로8 —
 // "잠시 후 다시 시도"만으로는 공포 상태의 사용자가 대체 행동을 얻지 못한다).
 const EMERGENCY_FALLBACK_TEXT =
   "이 안내를 기다리지 마시고, 급하면 지금 바로 112(경찰)·1332(금감원)에 전화하십시오. 돈을 보내기 전이라면 송금을 멈추십시오.";
 
-// 2026-08-13 어스2 2차 P0-② 수리: 텍스트 분석(explain) 결과 화면 최상단에 항상
+// 2026-08-13 외부 검토 2차 안전 수리: 텍스트 분석(explain) 결과 화면 최상단에 항상
 // 고정한다. 종전에는 매칭 0건일 때만 안내가 떠서, 위험 신호가 잡힌 경우
 // "이미 보냈다면 지금 신고" 안내를 아예 못 보는 사용자가 생겼다.
 const ALREADY_SENT_TOP_TEXT =
@@ -35,9 +35,9 @@ const CONTACTS = [
   { name: "명의도용방지", value: "msafer.or.kr", type: "url", url: "https://msafer.or.kr" },
 ];
 
-// 고정 질문(SPEC.md 1절). 서버 API 필드명(q1~q4)과 값(예/아니오/모름 등) 일치.
-// 2026-08-12 어스2 수리(P0): 송금 여부(q2)를 첫 질문으로 올리고, 송금="예"면
-// q3(정보 입력)를 건너뛴다(분기에 쓰이지 않음 — content.py classify 참조).
+// 고정 질문(기능 명세 1절). 서버 API 필드명(q1~q4)과 값(예/아니오/모름 등) 일치.
+// 2026-08-12 외부 검토 반영: 송금 여부(q2)를 첫 질문으로 올리고, 송금="예"면
+// q3(정보 입력)를 건너뛴다(분기에 쓰이지 않음 — 분류 로직 원본 참조).
 const QUESTIONS_BY_FIELD = {
   q1: {
     field: "q1",
@@ -45,7 +45,7 @@ const QUESTIONS_BY_FIELD = {
     options: ["예", "아니오", "모름"],
     optionLabels: { "예": "예", "아니오": "아니오", "모름": "모르겠음" },
   },
-  // 2026-08-13 어스2 2차 P0-② 수리: 계좌이체가 아닌 전달(현금·상품권 PIN·가상자산·
+ // 2026-08-13 외부 검토 2차 안전 수리: 계좌이체가 아닌 전달(현금·상품권 PIN·가상자산·
   // 가족 사칭으로 건넨 경우)을 고를 자리를 만든다. 종전 2지선다에서는 이들이
   // "아니오"를 눌러 B/C/D로 새어나갔다.
   q2: {
@@ -76,7 +76,7 @@ const QUESTIONS_BY_FIELD = {
 function buildSequence(answers) {
   const seq = ["q2", "q1"];
   // q3는 q2="아니오"일 때만 분기에 쓰인다("예"·"현금등"은 모두 분류 A로 직행 —
-  // content.py classify 참조). 2026-08-13 P0-② 수리로 "현금등"을 함께 제외.
+ // 분류 로직 원본 참조). 2026-08-13 안전 수리로 "현금등"을 함께 제외.
   if (answers.q2 === "아니오") seq.push("q3");
   seq.push("q4");
   return seq;
@@ -107,12 +107,12 @@ function clearNode(node) {
 }
 
 // ---------------------------------------------------------------------------
-// 정적 배포본(2026-08-14, 지시 27e9e4) — 서버 API 대신 로컬 계산
+// 정적 배포본(2026-08-14, 지시 내부 개선 이력) — 서버 API 대신 로컬 계산
 // ---------------------------------------------------------------------------
-// 원본 mvp/ 는 파이썬 서버(server.py)의 /api/classify · /api/explain 을 fetch 로
+// 원본 mvp/ 는 파이썬 서버(서버 원본)의 /api/classify· /api/explain 을 fetch 로
 // 불렀다. 이 정적 배포본에는 서버가 없다. 대신:
-//   · classify → data/classify_table.js 의 30조합 표(= content.py 를 실행해 굳힌 값)
-//   · explain  → rules.js (= rules.py 의 이식본)
+//· classify → data/classify_table.js 의 30조합 표(= 분류 로직 원본 를 실행해 굳힌 값)
+//· explain → rules.js (= 규칙 원본 의 이식본)
 // 두 경로 모두 mvp_static/verify_port.py 로 파이썬 원본과 완전일치 대조를 통과해야
 // 한다. 화면 코드(아래 전부)는 손대지 않았다 — 응답을 만드는 곳만 바뀐다.
 //
@@ -134,7 +134,7 @@ function apiResponse(status, data) {
 }
 
 function localClassify(body) {
-  // server.py _handle_classify 와 같은 검증 순서·같은 생략 규칙(q3 는 q2="아니오"
+ // 서버 원본의 입력 검증 와 같은 검증 순서·같은 생략 규칙(q3 는 q2="아니오"
   // 일 때만 요구)을 그대로 따른다.
   const q1 = body.q1;
   const q2 = body.q2;
@@ -162,7 +162,7 @@ function localExplain(body) {
     return apiResponse(400, { error: "'text' 필드가 없거나 문자열이 아닙니다" });
   }
   if (text.length > MAX_EXPLAIN_LEN) {
-    // 문구는 server.py 와 같게 유지한다 — 호출부가 "자를 넘었습니다"로 판별한다.
+ // 문구는 서버 원본과 같게 유지한다 — 호출부가 "자를 넘었습니다"로 판별한다.
     return apiResponse(400, { error: `텍스트가 ${MAX_EXPLAIN_LEN}자를 넘었습니다` });
   }
   if (typeof explain !== "function") throw new Error("rules.js 가 로드되지 않았습니다");
@@ -177,7 +177,7 @@ async function localApi(url, options) {
   return apiResponse(404, { error: "Not Found" });
 }
 
-// 2026-08-13 P1-① 수리: url 분기가 link.url 을 읽고 있었으나 content.py 의 단계별
+// 2026-08-13 동작 수리: url 분기가 link.url 을 읽고 있었으나 분류 로직 원본 의 단계별
 // 링크 딕셔너리(_LINK_PD·_LINK_PAYINFO·_LINK_MSAFER)에는 url 키가 없고 value 만
 // 있다 → href="undefined" 로 렌더돼 pd.fss·payinfo·msafer 버튼이 눌러도 아무 데도
 // 가지 않았다(실측 anchors = tel:112, tel:1332, undefined ×3).
@@ -185,7 +185,7 @@ async function localApi(url, options) {
 // 절대 URL이다). 하단 고정 연락처(CONTACTS)는 app.js 자체 배열이라 별개다.
 // 2026-08-14 UI 재설계: 이모지(📞·🔗)를 텍스트 라벨로 바꿨다. 이모지는 OS·브라우저
 // 마다 다르게 그려져 표기가 갈리고, 스크린리더가 "전화기" 같은 그림 이름을 읽어
-// 버튼의 뜻이 흐려진다(주안 결정). 외부 아이콘 라이브러리는 쓰지 않는다(CDN 금지).
+// 버튼의 뜻이 흐려진다(가독성 판단). 외부 아이콘 라이브러리는 쓰지 않는다(CDN 금지).
 function buildLinkButton(link) {
   if (link.type === "tel") {
     return el("a", { class: "step-link-btn", href: `tel:${link.value}`, text: `전화 ${link.label}` });
@@ -199,10 +199,10 @@ function buildLinkButton(link) {
   });
 }
 
-// 2026-08-14 footer tel: 수리(지시 2a5317): 종전에는 감염 상태를 모르고 무조건
-// tel:/url 링크를 렌더했다. 8/13 P0-③은 결과 카드 안의 버튼만 막아서, 감염 의심
+// 2026-08-14 footer tel: 수리: 종전에는 감염 상태를 모르고 무조건
+// tel:/url 링크를 렌더했다. 8/13 안전 수리는 결과 카드 안의 버튼만 막아서, 감염 의심
 // (q1=예/모름) 화면에서도 하단 고정 칩은 눌렸다 — 감염 폰으로 전화를 걸 수 있는
-// 구멍이었다. 판정 소스는 P0-③과 동일하게 서버 응답 links_disabled 하나만 쓴다
+// 구멍이었다. 판정 소스는 그 안전 수리와 동일하게 서버 응답 links_disabled 하나만 쓴다
 // (renderClassificationResult 참조 — 새 판정 로직을 만들지 않는다).
 // linksDisabled=true 면 같은 모양의 칩을 <span>(눌리지 않는 큰 글자)으로 렌더한다.
 // 번호·주소 글자 크기·3열 그리드는 그대로다(다른 전화기로 읽어 걸 수 있어야 한다).
@@ -230,6 +230,39 @@ function renderContactsFooter(linksDisabled) {
     }
     footer.appendChild(chip);
   });
+  syncFooterSpacing();
+}
+
+// 2026-08-14 수리: 하단 고정 바가 본문 마지막 줄을 덮는 문제.
+// 종전에는 CSS 로 #app { padding-bottom: 8.5rem }(=136px) 을 주고 있었고, 기본
+// 글자 크기(100%)에서는 바 높이가 133px 라 3px 차이로 간신히 안 가려졌다.
+// 그런데 바 높이는 rem 에 비례해 늘지 않는다(터치 최소 높이·칩 안쪽 여백이
+// 따로 붙는다). 실측: 루트 글자 112.5% → 바 167px vs 여백 153px(14px 가림),
+// 125% → 185 vs 170(15px), 150% → 221 vs 204(17px).
+// 🚨 글자를 키워 쓰는 사람이 바로 이 서비스의 주 이용자층(고령)이다. 즉 가장
+//    가려지면 안 되는 사용자에게서만 가려지고 있었다.
+// 그래서 고정값을 쓰지 않고 **실제 바 높이를 재서** 본문 아래 여백으로 준다.
+// 레이아웃만 바꾼다 — 판정·문구·링크 활성화 여부는 건드리지 않는다.
+const FOOTER_CLEARANCE_PX = 24;
+
+function syncFooterSpacing() {
+  const footer = document.getElementById("contacts-footer");
+  const app = document.getElementById("app");
+  if (!footer || !app) return;
+  const height = Math.ceil(footer.getBoundingClientRect().height);
+  if (!height) return; // 아직 렌더 전이면 CSS 기본값을 그대로 둔다.
+  app.style.paddingBottom = `${height + FOOTER_CLEARANCE_PX}px`;
+}
+
+// 바 높이는 화면 회전·창 크기·글자 크기 변경으로 바뀐다. 그때마다 다시 잰다.
+function watchFooterSize() {
+  const footer = document.getElementById("contacts-footer");
+  if (!footer) return;
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver(syncFooterSpacing).observe(footer);
+  }
+  window.addEventListener("resize", syncFooterSpacing);
+  window.addEventListener("orientationchange", syncFooterSpacing);
 }
 
 function showScreen(id) {
@@ -239,7 +272,7 @@ function showScreen(id) {
   scrollToTop();
 }
 
-// 2026-08-14 UI 재설계(나윤채 지적, P0급): 화면을 갈아끼워도 스크롤 위치가
+// 2026-08-14 UI 재설계(내부 검토 지적(최우선)): 화면을 갈아끼워도 스크롤 위치가
 // 그대로였다. 결과가 길면 사용자가 카드 중간에서 시작하게 되고, 그러면 8/12·8/13
 // 수리로 "카드보다 위"에 고정한 경고(감염 경고·현금등 안내·이미 보냈다면 신고)를
 // 아예 못 보고 지나간다 — 안전장치가 화면에는 있는데 눈에는 안 닿는 상태였다.
@@ -254,7 +287,7 @@ function scrollToTop() {
 
 // 붙여넣기(ⓑ) 화면은 결과가 입력창 "아래"에 붙는다. 여기서 페이지 맨 위로
 // 올리면 오히려 결과에서 멀어진다(2026-08-14 실측으로 확인해 바로잡음) —
-// 결과 블록의 첫머리로 보낸다. 첫머리에는 8/13 P0-② 고정 안내가 있다.
+// 결과 블록의 첫머리로 보낸다. 첫머리에는 8/13 안전 수리 고정 안내가 있다.
 function scrollNodeIntoView(node) {
   try {
     node.scrollIntoView(true);
@@ -272,21 +305,21 @@ function startFlow() {
   state.stepIndex = 0;
   document.getElementById("btn-flow-restart").classList.add("hidden");
   clearNode(document.getElementById("flow-result"));
-  // 감염 의심 결과가 사라지는 지점 — footer를 정상(링크 있음)으로 원복(2a5317).
+ // 감염 의심 결과가 사라지는 지점 — footer를 정상(링크 있음)으로 원복.
   renderContactsFooter(false);
   showScreen("screen-flow");
   renderCurrentQuestion();
 }
 
 // "처음으로" 버튼: 진짜 첫 화면(screen-home, ⓐⓑ 재선택 가능)으로 복귀하며
-// 내부 상태(답변·질문 인덱스)도 초기화한다. Q1 재시작이 아니다(EVAL_R1 #1).
+// 내부 상태(답변·질문 인덱스)도 초기화한다. Q1 재시작이 아니다(사용성 검토 지적).
 function goHome() {
   state.answers = {};
   state.stepIndex = 0;
   document.getElementById("btn-flow-restart").classList.add("hidden");
   clearNode(document.getElementById("flow-questions"));
   clearNode(document.getElementById("flow-result"));
-  // 감염 의심 결과가 사라지는 지점 — footer를 정상(링크 있음)으로 원복(2a5317).
+ // 감염 의심 결과가 사라지는 지점 — footer를 정상(링크 있음)으로 원복.
   renderContactsFooter(false);
   showScreen("screen-home");
 }
@@ -329,7 +362,7 @@ function renderCurrentQuestion() {
     el("div", { class: "option-row" }, optionButtons),
   ];
 
-  // 2026-08-12 어스2 수리(P1): 잘못 누른 답을 고칠 수 있는 "이전 질문" 버튼.
+ // 2026-08-12 외부 검토 반영: 잘못 누른 답을 고칠 수 있는 "이전 질문" 버튼.
   // 오답 1개가 교정 불가능한 잘못된 카드로 고정되는 것을 막는다.
   // 2026-08-14: 선택지 바로 밑에 붙어 오터치가 나기 쉬웠다 → 구분선·여백 추가
   // (back-btn 클래스). 기능은 그대로다.
@@ -384,7 +417,7 @@ async function fetchClassification(answers) {
     }));
   } catch (fetchError) {
     clearNode(resultBox);
-    // 2026-08-12 어스2 수리(경로8): 재시도 안내만 주지 않고 대체 행동을 준다.
+ // 2026-08-12 외부 검토 반영: 재시도 안내만 주지 않고 대체 행동을 준다.
     resultBox.appendChild(
       el("p", { class: "error-note", text: `서버에 연결할 수 없습니다. ${EMERGENCY_FALLBACK_TEXT}` })
     );
@@ -395,7 +428,7 @@ async function fetchClassification(answers) {
   clearNode(resultBox);
 
   if (!response.ok) {
-    // 2026-08-12 어스2 수리(경로8): 서버 내부 검증 문구를 피해자에게 그대로
+ // 2026-08-12 외부 검토 반영: 서버 내부 검증 문구를 피해자에게 그대로
     // 보여주지 않고, 행동 지시형 문구로 바꾼다.
     resultBox.appendChild(
       el("p", { class: "error-note", text: `요청을 처리하지 못했습니다. 처음부터 다시 시도해 주십시오. ${EMERGENCY_FALLBACK_TEXT}` })
@@ -409,7 +442,7 @@ async function fetchClassification(answers) {
 }
 
 function renderClassificationResult(container, classification) {
-  // 2026-08-12 어스2 수리(경로2): 감염 의심 경고 등 notices를 카드보다 위에
+ // 2026-08-12 외부 검토 반영: 감염 의심 경고 등 notices를 카드보다 위에
   // 경고 스타일로 고정 표시한다.
   // 2026-08-14 UI 재설계: notices가 최대 3개까지 연달아 나오는데 전부 같은 빨강
   // 최고강도라 서로를 지웠다(전부 강조 = 강조 없음). 위계를 준다.
@@ -422,16 +455,16 @@ function renderClassificationResult(container, classification) {
   //    감염 경고(INFECTION_NOTICE)와 현금등 안내(NON_TRANSFER_NOTICE)는 둘 다
   //    "지금 이렇게 하라"는 지시이므로 1단계를 유지한다.
   // 🚨 2단계라도 문구·글자 크기·빨강 테두리는 1단계와 같다. 배경만 내린다.
-  //    문구·개수·순서는 서버(content.py)가 준 그대로다 — 하나도 빼지 않는다.
+ // 문구·개수·순서는 서버(분류 로직 원본)가 준 그대로다 — 하나도 빼지 않는다.
   // 🚨 앞머리 이모지(🚨)는 렌더 시 붙이던 장식이라 뺐다(공지 문구 자체는 불변).
   //
-  // 식별 방법: content.py build_result 는 감염 의심일 때 notices[0]=INFECTION_NOTICE,
+ // 식별 방법: 분류 로직 원본 는 감염 의심일 때 notices[0]=INFECTION_NOTICE,
   // notices[1]=INFECTION_LINK_NOTE 를 이 순서로 넣고 links_disabled=true 를 함께
   // 보낸다. 그래서 links_disabled 가 참일 때의 index 1 만 2단계로 내린다.
   // (순서가 나중에 바뀌어도 문구·크기·테두리는 그대로이므로 안전이 깨지지 않고
   //  배경색만 달라진다.)
-  // 2026-08-14 footer tel: 수리(2a5317): 감염 의심 결과가 표시되는 동안에는 하단
-  // 고정 연락처 칩도 눌리지 않는 큰 글자로 바꾼다. 판정 소스 = 아래 P0-③과 같은
+ // 2026-08-14 footer tel: 수리: 감염 의심 결과가 표시되는 동안에는 하단
+ // 고정 연락처 칩도 눌리지 않는 큰 글자로 바꾼다. 판정 소스 = 아래 안전 수리와 같은
   // links_disabled 하나다. 비감염 결과면 false 가 넘어가 정상 칩이 복원된다.
   renderContactsFooter(Boolean(classification.links_disabled));
 
@@ -448,7 +481,7 @@ function renderClassificationResult(container, classification) {
 
   const stepItems = classification.steps.map((step, index) => {
     const links = (step.links || []).map(buildLinkButton);
-    // 2026-08-13 어스2 2차 P0-③ 수리: 감염 의심(q1=예/모름) 응답에서는 서버가
+ // 2026-08-13 외부 검토 2차 안전 수리: 감염 의심(q1=예/모름) 응답에서는 서버가
     // links를 비우고 link_texts(누를 수 없는 글자)를 준다. 감염 의심 폰으로
     // 전화·사이트 접속을 누르지 못하게 하되 번호는 크게 읽히도록 표시한다.
     const linkTexts = (step.link_texts || []).map((linkText) =>
@@ -472,7 +505,7 @@ function renderClassificationResult(container, classification) {
     el("ol", { class: "step-list" }, stepItems),
   ];
 
-  // 어스2 수리(경로4·5): 시간 안내·지급수단 주의를 카드 안에 표시.
+ // 외부 검토 반영: 시간 안내·지급수단 주의를 카드 안에 표시.
   (classification.cautions || []).forEach((cautionText) => {
     cardChildren.push(el("p", { class: "caution-note", text: cautionText }));
   });
@@ -491,7 +524,7 @@ function renderClassificationResult(container, classification) {
 // ---------------------------------------------------------------------------
 
 function startExplain() {
-  // 붙여넣기 화면에는 감염 판정 결과가 없다 — footer를 정상으로 원복(2a5317).
+ // 붙여넣기 화면에는 감염 판정 결과가 없다 — footer를 정상으로 원복.
   renderContactsFooter(false);
   showScreen("screen-explain");
   document.getElementById("input-warning").textContent = INPUT_WARNING_TEXT;
@@ -530,7 +563,7 @@ async function submitExplain() {
     }));
   } catch (fetchError) {
     clearNode(resultBox);
-    // 2026-08-12 어스2 수리(경로8): 대체 행동 안내를 함께 준다.
+ // 2026-08-12 외부 검토 반영: 대체 행동 안내를 함께 준다.
     resultBox.appendChild(
       el("p", { class: "error-note", text: `서버에 연결할 수 없습니다. ${EMERGENCY_FALLBACK_TEXT}` })
     );
@@ -541,7 +574,7 @@ async function submitExplain() {
 
   if (!response.ok) {
     // 글자수 초과(400)만 사용자가 고칠 수 있는 오류이므로 그대로 보여주고,
-    // 그 외에는 행동 지시형 문구로 통일한다(어스2 수리, 경로8).
+ // 그 외에는 행동 지시형 문구로 통일한다(외부 검토 반영, 경로8).
     const isLengthError = typeof data.error === "string" && data.error.includes("자를 넘었습니다");
     const message = isLengthError
       ? `${MAX_EXPLAIN_LEN}자 이내로 줄여서 다시 시도해 주십시오.`
@@ -574,14 +607,14 @@ function buildHighlightedTextBox(text, highlights) {
 }
 
 function renderExplainResult(container, data) {
-  // 2026-08-13 어스2 2차 P0-② 수리: 매칭 결과와 무관하게 최상단 고정 안내.
+ // 2026-08-13 외부 검토 2차 안전 수리: 매칭 결과와 무관하게 최상단 고정 안내.
   // 2026-08-14: 문구 불변, 앞머리 이모지만 뺐다(1단계 경고 스타일 유지).
   container.appendChild(el("p", { class: "notice-banner", text: ALREADY_SENT_TOP_TEXT }));
 
   container.appendChild(buildHighlightedTextBox(data.text, data.highlights));
 
   if (data.matched_rules.length === 0) {
-    // 2026-08-12 어스2 수리(경로1, 3패널 1~2순위): 미탐지를 "안전"으로 읽지
+ // 2026-08-12 외부 검토 반영: 미탐지를 "안전"으로 읽지
     // 않도록 — 도구의 한계를 먼저, 경고 스타일로 말한다.
     container.appendChild(
       el("p", {
@@ -618,6 +651,7 @@ function renderExplainResult(container, data) {
 
 function init() {
   renderContactsFooter(false);
+  watchFooterSize();
 
   document.getElementById("btn-go-flow").addEventListener("click", startFlow);
   document.getElementById("btn-go-explain").addEventListener("click", startExplain);

@@ -1,14 +1,14 @@
 "use strict";
 /* 자동 생성 파일 — 손으로 고치지 않는다.
-   생성: mvp_static/build_classify_table.py (mvp/content.py 를 실행해 30조합을 굳힘)
-   대조: mvp_static/verify_port.py (content.build_result 재실행과 완전일치 확인) */
+   분류 로직 원본을 실행해 30개 답변 조합의 결과를 그대로 굳힌 표다.
+   원본 재실행 결과와 완전일치하는지 배포 전 대조한다. */
 const CLASSIFY_TABLE = {
  "_meta": {
   "combos": 30,
-  "content_sha256_16": "495dfb21774c1c8f",
-  "generated_from": "mvp/content.py",
+  "generated_from": "분류 로직 원본",
   "key_format": "q1|q2|q3|q4 (q3 미사용이면 빈 문자열)",
-  "note": "이 파일은 손으로 고치지 않는다. content.py 가 바뀌면 이 스크립트를 다시 돌린다."
+  "note": "자동 생성 파일 — 손으로 고치지 않는다.",
+  "source_sha256_16": "495dfb21774c1c8f"
  },
  "table": {
   "모름|아니오|모름|방금": {
