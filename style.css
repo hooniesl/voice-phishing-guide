@@ -364,10 +364,9 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------------------------
-   경고 블록 — 2단계 위계
-   1단계(.notice-banner)      = 채운 빨강. 화면당 원칙적으로 1개.
-   2단계(.notice-banner--sub) = 흰 배경 + 빨강 굵은 테두리. 문구·글자 크기는
-                                동일하고 배경만 내린다(내용 약화가 아니다).
+   경고 블록 — 한 단계(1단계, 채운 빨강)뿐이다.
+   🚨 2026-08-19 사장 결정(8/16 "전부한줄경고로복귀"): 8/14에 만든 2단계
+   (.notice-banner--sub, 흰 배경 강등)를 없앴다. 모든 경고는 같은 강도다.
 --------------------------------------------------------------------------- */
 .notice-banner {
   background: var(--color-warn-bg);
@@ -380,11 +379,6 @@ textarea:focus-visible {
   border-radius: 10px;
   padding: 0.9rem 1rem;
   margin: 0 0 0.7rem;
-}
-
-.notice-banner--sub {
-  background: #fff;                /* 10.47:1 */
-  font-weight: 600;
 }
 
 /* 2026-08-12 외부 검토 반영: 카드 내 시간 안내·지급수단 주의 */
@@ -426,6 +420,87 @@ textarea:focus-visible {
   font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   2026-08-19 첫 화면 재편(사장 결정 8/16) — 전화(통화) 대응 중심.
+   .call-tactics   = "전화를 끊지 못하게 붙잡는 수법" 블록(금융위 원문 인용).
+   .sub-feature    = 부가 기능으로 강등된 "정해진 표현 6가지 찾아보기".
+   글자 크기는 사다리 하한(15px) 위, 터치는 --touch-min(44px) 이상 유지.
+--------------------------------------------------------------------------- */
+.call-tactics {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-navy);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  margin-top: 0.4rem;
+}
+
+.call-tactics-title {
+  margin: 0 0 0.5rem;
+  font-size: var(--fs-lg);
+  line-height: 1.4;
+  color: var(--color-navy);
+}
+
+.call-tactics-body {
+  margin: 0.5rem 0 0.3rem;
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.call-tactics-quote {
+  margin: 0.4rem 0;
+  padding: 0.55rem 0.75rem;
+  border-left: 4px solid var(--color-navy-light);
+  background: #eef1f7;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--color-text);
+  word-break: keep-all;
+}
+
+.sub-feature {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--color-border);
+  padding-top: 0.7rem;
+}
+
+.sub-feature-label {
+  margin: 0 0 0.3rem;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* 부가 기능 버튼 — 주 버튼(56px·굵은 강조)보다 낮은 위계. 터치 44px 유지. */
+.big-btn-sub {
+  background: #fff;
+  color: var(--color-navy);
+  border-color: var(--color-navy-light);
+  min-height: var(--touch-min);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+.big-btn-sub:active {
+  background: #e9edf4;
+}
+
+.sub-feature-desc {
+  margin: 0.4rem 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+/* 정해진 표현 6가지 찾아보기 화면 제목 (2026-08-19 개칭) */
+.explain-title {
+  margin: 0 0 0.6rem;
+  font-size: var(--fs-xl);
+  line-height: 1.35;
+  color: var(--color-navy);
 }
 
 /* ---------------------------------------------------------------------------
@@ -552,10 +627,10 @@ mark.risk-mark {
 
 .no-signal-note {
  /* 2026-08-12 외부 검토 반영: 미탐지 안내를 중립 회색이 아니라 경고
-     스타일로 — "안전 판정"으로 읽히는 것을 막는다. 2026-08-14에도 유지.
-     이 블록은 결과 화면의 유일한 1단계 경고가 아니므로(최상단 고정 안내가
-     이미 1단계) 흰 배경 + 굵은 빨강 테두리 2단계로 둔다 — 문구는 그대로다. */
-  background: #fff;
+     스타일로 — "안전 판정"으로 읽히는 것을 막는다.
+     🚨 2026-08-19 사장 결정(8/16 "전부한줄경고로복귀"): 8/14의 2단계(흰 배경)
+     강등을 걷고 다른 경고와 같은 1단계(채운 빨강)로 되돌렸다. 문구는 그대로다. */
+  background: var(--color-warn-bg);
   border: 2px solid var(--color-warn-border);
   border-left-width: 8px;
   color: var(--color-warn-text);

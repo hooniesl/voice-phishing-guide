@@ -57,13 +57,60 @@
       지금 의심스러운 통화를 하는 중이라면 <strong>먼저 전화를 끊으십시오.</strong>
       송금·이체는 잠시 멈추십시오.
     </p>
-    <p class="choose-label">지금 상황에 가까운 쪽을 고르십시오</p>
+    <p class="choose-label">지금 피해가 의심되면 아래 버튼을 누르십시오</p>
     <button type="button" id="btn-go-flow" class="big-btn big-btn-primary">
       지금 피해가 의심돼요
     </button>
-    <button type="button" id="btn-go-explain" class="big-btn big-btn-secondary">
-      이 문자/통화가 수상해요
-    </button>
+
+    <!-- 2026-08-19 재편(사장 결정 8/16 "부가기능으로내린다" + 사장 지적 "전화를
+         끊지않고 몇시간동안 계속 통화하는 사례가 많던데. 이부분도 감안한거야?"):
+         전화(통화) 대응을 첫 화면의 중심에 둔다. 아래 블록의 인용은 전부
+         금융위원회 보도자료 「보이스피싱 피해예방 10계명」(2026-02-10,
+         https://www.fsc.go.kr/no010101/86250) 원문 그대로다 — 스냅샷
+         기관원문_스냅샷_20260819/fsc_86250_피해예방10계명.html, 검증은
+         verify_quotes_20260814.py CALL-1~3. 새 기관·번호를 지어내지 않았다
+         (02-3480-2000 도 위 원문에 있는 번호다). -->
+    <section class="call-tactics" aria-labelledby="call-tactics-title">
+      <h2 id="call-tactics-title" class="call-tactics-title">
+        전화를 끊지 못하게 오래 붙잡는 수법이 있습니다
+      </h2>
+      <p class="call-tactics-body">금융위원회 안내 원문입니다:</p>
+      <blockquote class="call-tactics-quote">
+        “사기범은 피해자를 고립시키고 행동을 통제하기 위하여 수사중이라는
+        이유로 전화를 끊지 못하게 한다.”
+      </blockquote>
+      <blockquote class="call-tactics-quote">
+        “수사기관은 절대 수사중임을 이유로 전화를 끊지 못하게 강요하지
+        않으므로 일단 즉시 전화를 끊고 경찰청(112), 검찰청(02-3480-2000) 등
+        공식 대표번호로 직접 전화를 걸어 실제 사실을 확인해야 한다.”
+      </blockquote>
+      <p class="call-tactics-body">
+        통화가 몇 시간이 되었더라도 잘못이 아닙니다. 지금 끊으면 됩니다.
+        끊기 어려우면 금융위원회 안내대로 하십시오:
+      </p>
+      <blockquote class="call-tactics-quote">
+        “전화를 끊기 어려운 경우라도, 주변 사람·지인 등에게 도움을 청해
+        경찰에 신고하고 가족 등의 신변 상황을 정확히 파악해야 한다.”
+      </blockquote>
+      <p class="source-note">
+        출처: 금융위원회 「보이스피싱 피해예방 10계명」 (2026-02-10),
+        https://www.fsc.go.kr/no010101/86250
+      </p>
+    </section>
+
+    <!-- 2026-08-19 강등(사장 결정 8/16 "부가기능으로내린다" + "새이름으로바꾼다"):
+         텍스트 분석기를 부가 기능으로 내리고 이름을 실제 능력(정해진 표현군
+         6가지 탐색)에 맞게 바꾼다(F-628·F-629). -->
+    <div class="sub-feature">
+      <p class="sub-feature-label">부가 기능</p>
+      <button type="button" id="btn-go-explain" class="big-btn big-btn-sub">
+        정해진 표현 6가지 찾아보기
+      </button>
+      <p class="sub-feature-desc">
+        받은 문자나 통화 내용을 붙여넣으면, 미리 정해진 위험 표현 6가지가
+        있는지 찾아봅니다. 판정이 아닌 참고용 부가 기능입니다.
+      </p>
+    </div>
   </section>
 
   <!-- 상황 파악 흐름 -->
@@ -73,8 +120,10 @@
     <button type="button" id="btn-flow-restart" class="link-btn hidden">처음으로</button>
   </section>
 
-  <!-- 위험 신호 설명 -->
+  <!-- 정해진 표현 6가지 찾아보기 (구 "위험 신호 설명" — 2026-08-19 사장 결정
+       8/16 "새이름으로바꾼다"로 개칭, 부가 기능으로 강등) -->
   <section id="screen-explain" class="screen hidden">
+    <h2 class="explain-title">정해진 표현 6가지 찾아보기</h2>
  <!-- 2026-08-12 외부 검토 반영: "통화"는 붙여넣을 수 없으므로 입력 방법 안내 -->
     <label for="explain-textarea" class="field-label">
       의심되는 문자 내용을 붙여넣으세요. 통화였다면 기억나는 내용을 그대로 적어주세요
@@ -84,7 +133,7 @@
       placeholder="예: [해외발신] 고객님 계정이 정지되었습니다..."></textarea>
     <div class="char-count"><span id="explain-char-count">0</span> / 2000자</div>
     <button type="button" id="btn-explain-submit" class="big-btn big-btn-primary">
-      위험 신호 확인
+      정해진 표현 6가지 찾기
     </button>
     <div id="explain-result" aria-live="polite"></div>
     <button type="button" id="btn-explain-back" class="link-btn">처음으로</button>

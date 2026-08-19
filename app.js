@@ -444,39 +444,21 @@ async function fetchClassification(answers) {
 function renderClassificationResult(container, classification) {
  // 2026-08-12 외부 검토 반영: 감염 의심 경고 등 notices를 카드보다 위에
   // 경고 스타일로 고정 표시한다.
-  // 2026-08-14 UI 재설계: notices가 최대 3개까지 연달아 나오는데 전부 같은 빨강
-  // 최고강도라 서로를 지웠다(전부 강조 = 강조 없음). 위계를 준다.
-  //
-  // 🚨 위계 규칙은 "행동을 시키는 경고는 전부 1단계(채운 빨강)로 남긴다"이다.
-  //    2단계(흰 배경 + 굵은 빨강 테두리)로 내리는 것은 딱 하나 —
-  //    INFECTION_LINK_NOTE("이 화면에서는 전화 걸기·사이트 열기 버튼을 일부러
-  //    없앴습니다...") 뿐이다. 이 문장은 피해자에게 시키는 행동이 아니라 화면이
-  //    왜 이렇게 생겼는지 설명하는 UI 안내이기 때문이다.
-  //    감염 경고(INFECTION_NOTICE)와 현금등 안내(NON_TRANSFER_NOTICE)는 둘 다
-  //    "지금 이렇게 하라"는 지시이므로 1단계를 유지한다.
-  // 🚨 2단계라도 문구·글자 크기·빨강 테두리는 1단계와 같다. 배경만 내린다.
- // 문구·개수·순서는 서버(분류 로직 원본)가 준 그대로다 — 하나도 빼지 않는다.
-  // 🚨 앞머리 이모지(🚨)는 렌더 시 붙이던 장식이라 뺐다(공지 문구 자체는 불변).
-  //
- // 식별 방법: 분류 로직 원본 는 감염 의심일 때 notices[0]=INFECTION_NOTICE,
-  // notices[1]=INFECTION_LINK_NOTE 를 이 순서로 넣고 links_disabled=true 를 함께
-  // 보낸다. 그래서 links_disabled 가 참일 때의 index 1 만 2단계로 내린다.
-  // (순서가 나중에 바뀌어도 문구·크기·테두리는 그대로이므로 안전이 깨지지 않고
-  //  배경색만 달라진다.)
+  // (이력) 2026-08-14 UI 재설계에서 INFECTION_LINK_NOTE 하나에 2단계 위계를
+  // 줬으나, 2026-08-19 사장 결정(8/16 "전부한줄경고로복귀")으로 되돌렸다 —
+  // 아래 notices 렌더 참조. 앞머리 이모지(🚨) 제거는 그대로 유지(공지 문구 불변).
  // 2026-08-14 footer tel: 수리: 감염 의심 결과가 표시되는 동안에는 하단
  // 고정 연락처 칩도 눌리지 않는 큰 글자로 바꾼다. 판정 소스 = 아래 안전 수리와 같은
   // links_disabled 하나다. 비감염 결과면 false 가 넘어가 정상 칩이 복원된다.
   renderContactsFooter(Boolean(classification.links_disabled));
 
+  // 🚨 2026-08-19 경고 위계 복귀(사장 결정 8/16 "전부한줄경고로복귀"):
+  // 8/14에 INFECTION_LINK_NOTE 하나를 2단계(notice-banner--sub)로 내렸던 것을
+  // 되돌린다. 모든 경고는 같은 1단계(채운 빨강) 한 단계다. 문구·개수·순서는
+  // 서버(분류 로직 원본)가 준 그대로 — 하나도 빼지 않는다.
   const notices = classification.notices || [];
-  const uiExplainIndex = classification.links_disabled ? 1 : -1;
-  notices.forEach((noticeText, index) => {
-    container.appendChild(
-      el("p", {
-        class: index === uiExplainIndex ? "notice-banner notice-banner--sub" : "notice-banner",
-        text: noticeText,
-      })
-    );
+  notices.forEach((noticeText) => {
+    container.appendChild(el("p", { class: "notice-banner", text: noticeText }));
   });
 
   const stepItems = classification.steps.map((step, index) => {
@@ -620,7 +602,7 @@ function renderExplainResult(container, data) {
       el("p", {
         class: "no-signal-note",
         text:
-          "⚠️ 안전하다는 뜻이 아닙니다. 이 도구는 미리 등록된 위험 신호 6종만 찾을 수 있고, 대출 권유·가족 사칭·투자 리딩방·통장 협박 같은 다른 수법은 찾아내지 못합니다. 이미 돈을 보냈거나 조금이라도 의심되면 지금 바로 112(경찰)·1332(금감원)에 전화해 확인하십시오.",
+          "⚠️ 안전하다는 뜻이 아닙니다. 이 도구는 미리 정해진 표현 6가지만 찾을 수 있고, 대출 권유·가족 사칭·투자 리딩방·통장 협박 같은 다른 수법은 찾아내지 못합니다. 이미 돈을 보냈거나 조금이라도 의심되면 지금 바로 112(경찰)·1332(금감원)에 전화해 확인하십시오.",
       })
     );
   } else {
