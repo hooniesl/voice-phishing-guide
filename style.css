@@ -1,50 +1,25 @@
-/* 보이스피싱 대응 안내 MVP — 모바일 우선 스타일
-   팔레트: 짙은 남색(신뢰) + 호박색(주의 환기). 그라디언트·과도한 라운드 없음.
-
-   ===========================================================================
- 2026-08-14 UI 재설계 (내부 개선 이력 · 디자인 회의
- 내부 검토(UX/UI)·내부 검토(인터랙션))
-   ---------------------------------------------------------------------------
-   원칙 3가지만 지킨다.
-   ① 빨강은 "지금 당장 하라/하지 마라" 한 종류에만 쓴다. 고지·출처·설명은
-      뉴트럴로 내린다. 종전에는 한계고지 배너·첫화면 경고·감염 경고·미탐지
-      안내가 전부 같은 빨강 최고강도라 서로를 지웠다.
-      🚨 단, 경고 블록의 "문구"는 한 글자도 바꾸지 않는다. 색·크기만 조정한다.
-      🚨 같은 화면에 경고가 2개 이상이면 첫 번째만 풀강도(채운 빨강),
-         2번째부터는 흰 배경 + 빨강 굵은 테두리(=2단계). 약화가 아니라 위계다.
-   ② 최소 글자 크기를 올린다(고령·손떨림 사용자). 본문 17px, 어떤 글자도 15px
-      미만 금지. 종전 최소 = 연락처 칩 11.5px.
-   ③ 터치 영역 하한을 44px → 56px(주 버튼·선택지)로 올린다.
-
-   접근성 실측(2026-08-14, WCAG 2.1 대비식 직접 계산):
-     - 종전 주 버튼 흰글자/#c47a1f = 3.41:1  → AA 미달이었다.
-       #a35f0f 로 교체 = 5.00:1 통과. (호박 계열 유지)
-     - 나머지 조합은 종전에도 4.5:1 이상이었고 그대로 둔다.
-   외부 CDN·웹폰트·아이콘 라이브러리 0건(배포지 미열림 = 공모전 결격).
-   =========================================================================== */
-
 :root {
   --color-navy: #16233d;
   --color-navy-light: #24365c;
-  --color-amber: #c47a1f;        /* 밝은 면(테두리·강조선)에만 */
-  --color-amber-btn: #a35f0f;    /* 흰 글자를 얹는 면 — 대비 5.00:1 */
+  --color-amber: #c47a1f;        
+  --color-amber-btn: #a35f0f;    
   --color-amber-dark: #9c5f14;
   --color-bg: #f4f2ec;
   --color-card-bg: #ffffff;
   --color-text: #1c1c1c;
-  --color-text-muted: #4f4f48;   /* 종전 #5a5a52 → 한 단계 진하게 */
+  --color-text-muted: #4f4f48;   
   --color-warn-bg: #fdecec;
   --color-warn-border: #b3261e;
   --color-warn-text: #7a1c17;
   --color-border: #d8d3c7;
   --color-focus: #0b5fd0;
 
-  /* 글자 크기 사다리 — 어떤 값도 15px 밑으로 내려가지 않는다 */
-  --fs-xs: 0.9375rem;  /* 15px — 출처·보조 (하한) */
-  --fs-sm: 1rem;       /* 16px */
-  --fs-md: 1.0625rem;  /* 17px — 본문 기본 */
-  --fs-lg: 1.1875rem;  /* 19px */
-  --fs-xl: 1.375rem;   /* 22px */
+  
+  --fs-xs: 0.9375rem;  
+  --fs-sm: 1rem;       
+  --fs-md: 1.0625rem;  
+  --fs-lg: 1.1875rem;  
+  --fs-xl: 1.375rem;   
 
   --touch-min: 44px;
   --touch-primary: 56px;
@@ -54,10 +29,6 @@
   box-sizing: border-box;
 }
 
-/* html 의 font-size 는 브라우저 기본(보통 16px)을 그대로 둔다. 여기에 rem 값을
-   주면 rem 이 그 값을 다시 기준으로 삼아 사다리 전체가 한 번 더 곱해진다
-   (실측: root 17px → 0.9375rem 이 15px 이 아니라 15.94px 로 나왔다).
-   사용자가 브라우저에서 키운 기본 글자 크기도 그대로 따라가야 한다. */
 html {
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
@@ -77,7 +48,6 @@ body {
   display: none !important;
 }
 
-/* 키보드 사용자·심사자를 위한 명시적 포커스 링(종전 없음). */
 a:focus-visible,
 button:focus-visible,
 textarea:focus-visible {
@@ -85,13 +55,6 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* ---------------------------------------------------------------------------
-   상단: 한계 고지 배너 + 제목
-   배너는 SPEC 1절 ③에 따라 전 화면 상시 표시(문구 원문 유지). 종전에는 빨강
-   이라 바로 아래 "전화를 끊으십시오"(진짜 긴급)와 강도가 같았다 → 남색 계열로
-   내려 헤더와 한 덩어리로 읽히게 하고, 빨강은 긴급 지시에만 남긴다.
-   흰 글자 / #24365c = 11.95:1.
---------------------------------------------------------------------------- */
 .banner {
   background: var(--color-navy-light);
   border-bottom: 3px solid var(--color-amber);
@@ -137,9 +100,6 @@ textarea:focus-visible {
   gap: 1rem;
 }
 
-/* ---------------------------------------------------------------------------
-   버튼
---------------------------------------------------------------------------- */
 .big-btn {
   display: block;
   width: 100%;
@@ -155,7 +115,7 @@ textarea:focus-visible {
 }
 
 .big-btn-primary {
-  background: var(--color-amber-btn); /* 흰 글자 대비 5.00:1 (종전 3.41:1) */
+  background: var(--color-amber-btn); 
   color: #fff;
 }
 .big-btn-primary:active {
@@ -198,13 +158,6 @@ textarea:focus-visible {
   color: #fff;
 }
 
-/* ---------------------------------------------------------------------------
-   질문 화면
-   2026-08-14: "Q1./Q2." 번호를 뺐다. 화면에 뜨는 첫 질문은 내부 필드 q2(송금)
-   인데 라벨은 "Q1."이 찍혀 SPEC/README의 Q번호와 어긋났다(잘못된 질문에 답할
-   위험). 대신 남은 개수를 보여주는 진행 표시를 넣는다 — 당황한 사용자에게
-   "끝이 보이는가"가 이탈을 가른다.
---------------------------------------------------------------------------- */
 .question-block {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border);
@@ -244,9 +197,6 @@ textarea:focus-visible {
   font-weight: 700;
 }
 
-/* ---------------------------------------------------------------------------
-   결과 카드
---------------------------------------------------------------------------- */
 .result-card {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border);
@@ -270,8 +220,6 @@ textarea:focus-visible {
   gap: 0.9rem;
 }
 
-/* 번호를 원형 배지로 빼서 "몇 번째 할 일인지"가 눈으로 잡히게 한다.
-   종전에는 "1." 이 본문과 같은 줄에 붙어 통짜 문단으로 읽혔다. */
 .step-item {
   display: flex;
   gap: 0.7rem;
@@ -289,7 +237,7 @@ textarea:focus-visible {
   height: 30px;
   border-radius: 50%;
   background: var(--color-navy);
-  color: #fff;               /* 15.65:1 */
+  color: #fff;               
   font-size: var(--fs-sm);
   font-weight: 700;
   display: flex;
@@ -319,19 +267,12 @@ textarea:focus-visible {
   border-radius: 10px;
   border: 2px solid var(--color-navy);
   background: #eef1f6;
-  color: var(--color-navy);   /* 13.82:1 */
+  color: var(--color-navy);   
   text-decoration: none;
   display: inline-flex;
   align-items: center;
 }
 
-/* 2026-08-13 외부 검토 2차 안전 수리: 감염 의심 응답에서 tel·url 버튼 대신 쓰는
-   "누를 수 없는 큰 글자". 버튼처럼 보이면 다시 누르려 하므로 링크색·테두리 없이
-   글자만 크게 한다(사용자가 다른 전화기로 옮겨 적을 수 있게 선택은 허용).
-   🚨 2026-08-14: 배경이 링크 버튼(#eef1f6)과 같은 톤이라 여전히 버튼으로 보였다.
-   점선 테두리 + 종이(메모지) 톤으로 바꿔 "누르는 것"이 아니라 "옮겨 적는 것"
- 으로 읽히게 한다. 이 블록은 안전장치이므로 없애거나 링크로 되돌리지
-   않는다. */
 .step-link-texts {
   margin-top: 0.6rem;
   display: flex;
@@ -354,25 +295,20 @@ textarea:focus-visible {
 
 .source-note {
   margin-top: 1rem;
- /* 2026-08-12 외부 검토 반영: 한계·출처 고지가 "화면 최소 글자"라는 지적
-     반영 — 0.78rem → 0.88rem 상향. 2026-08-14 재상향 0.9375rem(15px, 하한). */
+ 
+
   font-size: var(--fs-xs);
-  color: var(--color-text-muted);   /* 6.96:1 → 8.25:1 로 진하게 */
+  color: var(--color-text-muted);   
   border-top: 1px dashed var(--color-border);
   padding-top: 0.7rem;
   word-break: break-word;
 }
 
-/* ---------------------------------------------------------------------------
-   경고 블록 — 한 단계(1단계, 채운 빨강)뿐이다.
- 🚨 2026-08-19 내부 결정(8/16 "내부 결정 내용"): 8/14에 만든 2단계
-   (.notice-banner--sub, 흰 배경 강등)를 없앴다. 모든 경고는 같은 강도다.
---------------------------------------------------------------------------- */
 .notice-banner {
   background: var(--color-warn-bg);
   border: 2px solid var(--color-warn-border);
   border-left-width: 8px;
-  color: var(--color-warn-text);   /* 9.17:1 */
+  color: var(--color-warn-text);   
   font-size: var(--fs-md);
   font-weight: 700;
   line-height: 1.55;
@@ -381,12 +317,11 @@ textarea:focus-visible {
   margin: 0 0 0.7rem;
 }
 
-/* 2026-08-12 외부 검토 반영: 카드 내 시간 안내·지급수단 주의 */
 .caution-note {
   background: #fdf6e8;
   border: 1px solid var(--color-amber-dark);
   border-left: 5px solid var(--color-amber-dark);
-  color: #6b4a10;                  /* 7.47:1 */
+  color: #6b4a10;                  
   font-size: var(--fs-sm);
   line-height: 1.55;
   border-radius: 10px;
@@ -394,9 +329,6 @@ textarea:focus-visible {
   margin: 0.9rem 0 0;
 }
 
-/* 2026-08-12 외부 검토 반영: 첫 화면 통화·송금 중단 고정 경고.
-   2026-08-14: 첫 화면에서 유일한 빨강이 되도록 배너를 남색으로 내렸고,
-   이 블록은 오히려 키웠다(첫 화면의 주인공). */
 .home-warning {
   background: var(--color-warn-bg);
   border: 2px solid var(--color-warn-border);
@@ -414,7 +346,6 @@ textarea:focus-visible {
   font-weight: 800;
 }
 
-/* 첫 화면 버튼 위 짧은 안내(무엇을 고르는지). 문구는 index.html 참조. */
 .choose-label {
   margin: 0.3rem 0 -0.2rem;
   font-size: var(--fs-xs);
@@ -422,12 +353,6 @@ textarea:focus-visible {
   color: var(--color-text-muted);
 }
 
-/* ---------------------------------------------------------------------------
- 2026-08-19 첫 화면 재편(내부 결정 8/16) — 전화(통화) 대응 중심.
-   .call-tactics   = "전화를 끊지 못하게 붙잡는 수법" 블록(금융위 원문 인용).
-   .sub-feature    = 부가 기능으로 강등된 "정해진 표현 6가지 찾아보기".
-   글자 크기는 사다리 하한(15px) 위, 터치는 --touch-min(44px) 이상 유지.
---------------------------------------------------------------------------- */
 .call-tactics {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border);
@@ -475,7 +400,6 @@ textarea:focus-visible {
   color: var(--color-text-muted);
 }
 
-/* 부가 기능 버튼 — 주 버튼(56px·굵은 강조)보다 낮은 위계. 터치 44px 유지. */
 .big-btn-sub {
   background: #fff;
   color: var(--color-navy);
@@ -495,7 +419,6 @@ textarea:focus-visible {
   color: var(--color-text-muted);
 }
 
-/* 정해진 표현 6가지 찾아보기 화면 제목 (2026-08-19 개칭) */
 .explain-title {
   margin: 0 0 0.6rem;
   font-size: var(--fs-xl);
@@ -503,12 +426,6 @@ textarea:focus-visible {
   color: var(--color-navy);
 }
 
-/* ---------------------------------------------------------------------------
-   입력 화면
---------------------------------------------------------------------------- */
-/* 붙여넣기 결과로 스크롤할 때, 위에 떠 있는 sticky 배너가 결과 첫 줄을 덮었다
- (2026-08-14 실측 스크린샷에서 8/13 안전 수리 고정 안내의 첫 줄이 가려졌다).
-   배너 높이만큼 여백을 두고 멈추게 한다. */
 #explain-result {
   scroll-margin-top: 4.75rem;
 }
@@ -571,8 +488,6 @@ textarea:focus {
   min-height: var(--touch-min);
 }
 
-/* 질문 화면의 "이전 질문으로(답 고치기)"는 선택지 바로 밑에 붙어 오터치가
- 나기 쉬웠다 — 간격을 벌리고 구분선을 준다(내부 검토 지적). */
 .back-btn {
   margin-top: 0.9rem;
   padding-top: 0.9rem;
@@ -583,7 +498,7 @@ textarea:focus {
 
 mark.risk-mark {
   background: #fbe3b0;
-  color: #4a2c00;                  /* 10.12:1 */
+  color: #4a2c00;                  
   font-weight: 700;
   border-radius: 3px;
   padding: 0 0.15rem;
@@ -626,10 +541,8 @@ mark.risk-mark {
 }
 
 .no-signal-note {
- /* 2026-08-12 외부 검토 반영: 미탐지 안내를 중립 회색이 아니라 경고
-     스타일로 — "안전 판정"으로 읽히는 것을 막는다.
- 🚨 2026-08-19 내부 결정(8/16 "내부 결정 내용"): 8/14의 2단계(흰 배경)
-     강등을 걷고 다른 경고와 같은 1단계(채운 빨강)로 되돌렸다. 문구는 그대로다. */
+ 
+
   background: var(--color-warn-bg);
   border: 2px solid var(--color-warn-border);
   border-left-width: 8px;
@@ -653,7 +566,6 @@ mark.risk-mark {
   line-height: 1.55;
 }
 
-/* 로딩 표시 — 종전에는 본문 한 줄이라 눌렸는지 알기 어려웠다. */
 .loading-note {
   background: var(--color-card-bg);
   border: 1px solid var(--color-border);
@@ -665,9 +577,6 @@ mark.risk-mark {
   margin: 0;
 }
 
-/* ---------------------------------------------------------------------------
-   하단 고정 연락처
---------------------------------------------------------------------------- */
 .contacts-footer {
   position: fixed;
   bottom: 0;
@@ -675,12 +584,8 @@ mark.risk-mark {
   right: 0;
   background: var(--color-navy);
   padding: 0.45rem 0.5rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
- /* 2026-08-12 외부 검토 반영: 375px에서 payinfo·msafer가 스와이프 표시
-     없이 잘리던 문제 — 줄바꿈으로 6개 전부 보이게 한다.
-     🚨 2026-08-14: 6개 전부 보이는 것은 그대로 유지하되 flex-wrap → 3열 그리드로
-     바꿨다. 이름 길이에 따라 2줄이 되었다 3줄이 되었다 하면서 고정 영역이
-     375px에서 화면의 약 5분의 1을 먹고 있었다(실측 스크린샷 01). 3열 2행으로
-     고정하면 높이가 변하지 않고, 6개가 잘리지도 않는다. */
+ 
+
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.35rem;
@@ -697,10 +602,10 @@ mark.risk-mark {
   padding: 0.35rem 0.6rem;
   border-radius: 10px;
   background: var(--color-navy-light);
-  color: #e8ecf5;                  /* 10.10:1 (종전 0.72rem=11.5px → 13px) */
+  color: #e8ecf5;                  
   text-decoration: none;
-  /* 15px 하한의 유일한 예외 — 6개를 한 화면에 유지해야 하는 고정 영역이다.
-     종전 11.5px에서 13px로 올렸고, 실제 값(번호·주소)은 15px로 키웠다. */
+  
+
   font-size: 0.8125rem;
   line-height: 1.25;
   text-align: center;
@@ -713,20 +618,12 @@ mark.risk-mark {
   color: #fff;
 }
 
-/* 2026-08-14 footer tel: 수리 — 감염 의심 결과 표시 중의 칩.
-   <a>가 아니라 <span>이라 애초에 눌리지 않지만, 커서·모양은 명시로 굳힌다.
-   글자 크기·색·3열 그리드는 .contact-chip 그대로 물려받는다(번호는 다른
-   전화기로 읽어 걸 수 있어야 하므로 시각 정보는 하나도 줄이지 않는다). */
 .contact-chip--textonly {
   cursor: default;
   user-select: text;
   -webkit-user-select: text;
 }
 
-/* ---------------------------------------------------------------------------
-   넓은 화면(심사자 PC) — 모바일 세로 레이아웃을 그대로 두되, 베이지 여백에
-   본문이 떠 있는 미완성 인상을 없앤다. 폭·순서는 바꾸지 않는다.
---------------------------------------------------------------------------- */
 @media (min-width: 600px) {
   #app {
     padding-bottom: 7rem;

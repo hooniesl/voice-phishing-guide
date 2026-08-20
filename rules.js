@@ -1,31 +1,8 @@
 "use strict";
 
-/* 위험 신호 규칙기반 매칭 — 규칙 원본 의 브라우저 이식본.
-
-
- 🚨 이 파일은 규칙 원본(파이썬)과 **같은 결과**를 내야 한다. 다르면 그것이 결함이다.
-   대조 방법 = mvp_static/verify_port.py (파이썬 원본 출력과 이 파일 출력을
-   케이스마다 JSON 완전일치로 비교). 이 파일을 고치면 반드시 다시 돌린다.
-
-   파이썬 → JS 로 옮기면서 조용히 달라질 수 있는 지점 4개와 그 처리:
-   1) 파이썬 `.` 는 개행(\n)만 제외하고 전부 매칭한다. JS `.` 는 \n 외에
-      \r· ·  도 제외한다 → 정규식의 `.` 를 전부 `[^\n]` 로 바꿔
-      파이썬 의미를 그대로 옮겼다.
-   2) 파이썬 `\s` 와 JS `\s` 의 문자 집합이 다르다(\x1c-\x1f·\x85 는 파이썬만,
-      ﻿ 는 JS만) → 파이썬에서 실제로 뽑은 집합(PY_SPACE)을 그대로 쓴다.
-      뽑은 명령: python3 -c "re.compile(r'\s').fullmatch(chr(c))" 전수 스캔.
-   3) 파이썬 문자열 인덱스는 코드포인트, JS 는 UTF-16 코드유닛이다 → 여기서는
- 처음부터 UTF-16 좌표로만 계산한다(규칙 원본이 마지막에 하는 utf16 변환이
-      이 파일에서는 불필요해진다. 결과 좌표계는 동일).
-   4) 정규식 `u` 플래그를 켜야 `[^\n]{0,10}` 가 이모지 1자를 1자로 센다
-      (안 켜면 서로게이트 2개로 세어 파이썬과 어긋난다).
-*/
-
-// 파이썬 re 의 \s 와 정확히 같은 문자 집합(위 2번).
 const PY_SPACE =
   "[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]";
 
-// 규칙 6종 — 패턴·이름·설명문은 규칙 원본 RULES 와 글자 그대로 같아야 한다.
 const RULES = [
   {
     id: 1,
@@ -105,24 +82,20 @@ const RULES = [
   },
 ];
 
-// 매칭 전 제거하는 문자(규칙 원본의 무시문자 집합 와 동일 11자).
-// "인 증 번 호"처럼 사이를 띄우는 우회를 막는다.
 const IGNORABLE_CHARS = new Set([
-  "\u0009", // tab
-  "\u000a", // LF
-  "\u000b", // VT
-  "\u000c", // FF
-  "\u000d", // CR
-  "\u0020", // space
-  "\u00a0", // NBSP
-  "\u200b", // ZWSP
-  "\u200c", // ZWNJ
-  "\u200d", // ZWJ
-  "\ufeff", // BOM(ZWNBSP)
+  "\u0009", 
+  "\u000a", 
+  "\u000b", 
+  "\u000c", 
+  "\u000d", 
+  "\u0020", 
+  "\u00a0", 
+  "\u200b", 
+  "\u200c", 
+  "\u200d", 
+  "\ufeff", 
 ]);
 
-// 공백류를 뺀 정규화 문자열과, 정규화 인덱스 → 원문 인덱스 맵(둘 다 UTF-16 단위).
-// 제거 대상 11자는 전부 BMP 단일 코드유닛이라 서로게이트 쌍을 쪼개지 않는다.
 function buildNormalized(text) {
   const chars = [];
   const indexMap = [];
@@ -135,10 +108,6 @@ function buildNormalized(text) {
   return { normalized: chars.join(""), indexMap };
 }
 
-/* 규칙 6종을 매칭해 설명문 목록과 강조 구간을 반환한다.
- 판정·확률·점수는 만들지 않는다(규칙 원본과 동일). 입력 텍스트는 이 함수
-   호출 동안만 메모리에 있고 어디에도 저장·전송하지 않는다 — 정적 배포본에는
-   서버가 없으므로 네트워크로 나가는 경로 자체가 없다. */
 function explain(text) {
   const { normalized, indexMap } = buildNormalized(text);
 
@@ -149,8 +118,8 @@ function explain(text) {
     while ((match = rule.pattern.exec(normalized)) !== null) {
       const matched = match[0];
       if (matched.length === 0) {
-        // 빈 매칭이면 무한 루프를 피하려 한 칸 밀고 계속한다(파이썬 finditer 와
-        // 같은 진행). 파이썬도 길이 0 매칭은 continue 로 건너뛴다.
+        
+        
         rule.pattern.lastIndex += 1;
         continue;
       }
@@ -160,7 +129,7 @@ function explain(text) {
     }
   }
 
-  // 시작 위치로만 정렬(안정 정렬 — 같은 시작이면 규칙 번호 순서가 유지된다).
+  
   rawSpans.sort((a, b) => a.start - b.start);
 
   const highlights = [];
@@ -168,7 +137,7 @@ function explain(text) {
   let lastEnd = -1;
   for (const span of rawSpans) {
     if (span.start < lastEnd) {
-      // 앞선 구간과 겹치면 강조 표시에서는 건너뛴다(설명 카드는 그대로 남긴다).
+      
       matchedRuleIds.add(span.rule_id);
       continue;
     }
@@ -186,7 +155,6 @@ function explain(text) {
   return { text, highlights, matched_rules: matchedRules };
 }
 
-// 브라우저(app.js)와 node(대조 스크립트) 양쪽에서 쓴다.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { RULES, explain };
 }

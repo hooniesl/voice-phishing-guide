@@ -2,36 +2,17 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<!-- 2026-08-14 UI 재설계: maximum-scale=1 을 뺐다. 확대를 막으면 고령·저시력
-     사용자가 글자를 키울 수 없다(WCAG 1.4.4 리사이즈). 이 서비스의 주 사용자층을
-     생각하면 확대 금지는 그대로 둘 수 없는 설정이다. -->
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 🚨 2026-08-14 안전 수리: iOS Safari 는 본문에 있는 전화번호 모양 글자를 우리가
-     링크로 만들지 않아도 **자동으로 눌리는 전화 링크로 바꾼다**. 감염이 의심되는
-     상황에서는 그 폰으로 전화를 걸게 하지 않는 것이 이 서비스의 핵심 안전 설계인데,
-     자동 변환이 그 설계를 우회한다. telephone=no 로 자동 변환을 끈다.
-     (우리가 의도적으로 만든 tel: 링크는 이 설정과 무관하게 그대로 동작한다.) -->
+
 <meta name="format-detection" content="telephone=no">
 <meta name="format-detection" content="date=no, address=no, email=no">
-<!-- 2026-08-14: 제출 전 배포본이므로 검색엔진 색인을 막는다. 심사 URL 은 링크를
-     아는 사람이 열면 되고(공고상 요구는 '접근 가능'이지 '검색 노출'이 아니다),
-     색인되면 내려도 캐시가 남는다. 제출 확정 후 필요하면 이 두 줄과
-     robots.txt 를 뺀다. -->
+
 <meta name="robots" content="noindex, nofollow">
 <title>보이스피싱 대응 안내 (MVP)</title>
-<!-- 파비콘 요청으로 콘솔에 404가 찍히던 것을 빈 데이터 URI로 막는다. 외부 파일을
-     받아오지 않는다(CDN 0 원칙 유지). 심사자가 개발자도구를 열었을 때 빨간 404가
-     보이지 않게 하는 목적이다. -->
+
 <link rel="icon" href="data:,">
-<!-- 2026-08-14 정적 배포본: 보안 정책을 meta 로 건다.
-     GitHub Pages 는 응답 헤더를 우리가 정할 수 없어 CSP 를 헤더로 못 보낸다 —
-     meta 로 거는 것이 이 호스팅에서 가능한 최대치다.
-     default-src 'none' 이므로 이 페이지는 **외부로 어떤 요청도 보낼 수 없다**
-     (fetch·XHR·비콘·외부 폰트·외부 이미지·분석 스크립트 전부 차단). 붙여넣은
-     문자가 밖으로 나갈 경로가 정책 차원에서 막힌다.
-     🚨 style-src 에 'unsafe-inline' 이 있는 이유(정직 고지): 질문 진행바가
-     style="width:NN%" 인라인 속성을 쓴다. CSP 는 인라인 style 속성도 막기
-     때문에 이걸 빼면 진행바가 사라진다. script 쪽에는 'unsafe-inline' 이 없다. -->
+
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <link rel="stylesheet" href="./style.css">
 </head>
@@ -48,11 +29,10 @@
 
 <main id="app">
 
-  <!-- 첫 화면 -->
+  
   <section id="screen-home" class="screen">
- <!-- 2026-08-12 외부 검토 반영: 통화 중단·송금 중단을 첫 화면 최상단에 고정
-         2026-08-14: 문구 그대로. 배너를 남색으로 내려 이 블록이 첫 화면에서
-         유일한 빨강이 되게 했다(위계). -->
+ 
+
     <p class="home-warning">
       지금 의심스러운 통화를 하는 중이라면 <strong>먼저 전화를 끊으십시오.</strong>
       송금·이체는 잠시 멈추십시오.
@@ -62,14 +42,8 @@
       지금 피해가 의심돼요
     </button>
 
- <!-- 2026-08-19 재편(내부 결정 8/16 "내부 결정 내용" + 내부 결정 "전화를
- 끊지않고 몇시간동안 계속 통화하는 사례가 많던데. 내부 결정 내용?"):
-         전화(통화) 대응을 첫 화면의 중심에 둔다. 아래 블록의 인용은 전부
-         금융위원회 보도자료 「보이스피싱 피해예방 10계명」(2026-02-10,
-         https://www.fsc.go.kr/no010101/86250) 원문 그대로다 — 스냅샷
-         기관원문_스냅샷_20260819/fsc_86250_피해예방10계명.html, 검증은
-         verify_quotes_20260814.py CALL-1~3. 새 기관·번호를 지어내지 않았다
-         (02-3480-2000 도 위 원문에 있는 번호다). -->
+ 
+
     <section class="call-tactics" aria-labelledby="call-tactics-title">
       <h2 id="call-tactics-title" class="call-tactics-title">
         전화를 끊지 못하게 오래 붙잡는 수법이 있습니다
@@ -98,9 +72,8 @@
       </p>
     </section>
 
- <!-- 2026-08-19 강등(내부 결정 8/16 "내부 결정 내용" + "내부 결정 내용"):
-         텍스트 분석기를 부가 기능으로 내리고 이름을 실제 능력(정해진 표현군
- 6가지 탐색)에 맞게 바꾼다(내부 개선 이력). -->
+ 
+
     <div class="sub-feature">
       <p class="sub-feature-label">부가 기능</p>
       <button type="button" id="btn-go-explain" class="big-btn big-btn-sub">
@@ -113,18 +86,18 @@
     </div>
   </section>
 
-  <!-- 상황 파악 흐름 -->
+  
   <section id="screen-flow" class="screen hidden">
     <div id="flow-questions"></div>
     <div id="flow-result" aria-live="polite"></div>
     <button type="button" id="btn-flow-restart" class="link-btn hidden">처음으로</button>
   </section>
 
- <!-- 정해진 표현 6가지 찾아보기 (구 "위험 신호 설명" — 2026-08-19 내부 결정
- 8/16 "내부 결정 내용"로 개칭, 부가 기능으로 강등) -->
+ 
+
   <section id="screen-explain" class="screen hidden">
     <h2 class="explain-title">정해진 표현 6가지 찾아보기</h2>
- <!-- 2026-08-12 외부 검토 반영: "통화"는 붙여넣을 수 없으므로 입력 방법 안내 -->
+ 
     <label for="explain-textarea" class="field-label">
       의심되는 문자 내용을 붙여넣으세요. 통화였다면 기억나는 내용을 그대로 적어주세요
     </label>
@@ -143,10 +116,6 @@
 
 <footer id="contacts-footer" class="contacts-footer"></footer>
 
-<!-- 2026-08-14 정적 배포본: 서버 API 대신 아래 두 파일이 계산을 맡는다.
-     순서 중요 — app.js 가 CLASSIFY_TABLE 과 explain() 을 쓴다.
-     경로는 절대(/static/…)에서 상대(./)로 바꿨다. GitHub Pages 는 저장소
-     하위 경로(/<repo>/)로 서비스되므로 절대경로면 CSS·JS 가 404 가 된다. -->
 <script src="./data/classify_table.js"></script>
 <script src="./rules.js"></script>
 <script src="./app.js"></script>
