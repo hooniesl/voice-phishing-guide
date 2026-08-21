@@ -5,6 +5,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
 <meta name="format-detection" content="telephone=no">
 <meta name="format-detection" content="date=no, address=no, email=no">
 
@@ -13,8 +14,11 @@
 
 <link rel="icon" href="data:,">
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./upgrade.css">
+<link rel="stylesheet" href="./combo.css">
 </head>
 <body>
 
@@ -32,7 +36,6 @@
   
   <section id="screen-home" class="screen">
  
-
     <p class="home-warning">
       지금 의심스러운 통화를 하는 중이라면 <strong>먼저 전화를 끊으십시오.</strong>
       송금·이체는 잠시 멈추십시오.
@@ -43,7 +46,6 @@
     </button>
 
  
-
     <section class="call-tactics" aria-labelledby="call-tactics-title">
       <h2 id="call-tactics-title" class="call-tactics-title">
         전화를 끊지 못하게 오래 붙잡는 수법이 있습니다
@@ -66,6 +68,20 @@
         “전화를 끊기 어려운 경우라도, 주변 사람·지인 등에게 도움을 청해
         경찰에 신고하고 가족 등의 신변 상황을 정확히 파악해야 한다.”
       </blockquote>
+      
+      <div class="onetouch-row">
+        <a class="onetouch-btn onetouch-btn--tel" href="tel:112"
+           aria-label="경찰청 112 전화 걸기">
+          <span class="onetouch-btn-label">경찰청</span>
+          <strong class="onetouch-btn-value">112 전화 걸기</strong>
+        </a>
+        <a class="onetouch-btn onetouch-btn--tel" href="tel:02-3480-2000"
+           aria-label="검찰청 02-3480-2000 전화 걸기">
+          <span class="onetouch-btn-label">검찰청</span>
+          <strong class="onetouch-btn-value">02-3480-2000 전화 걸기</strong>
+        </a>
+      </div>
+
       <p class="source-note">
         출처: 금융위원회 「보이스피싱 피해예방 10계명」 (2026-02-10),
         https://www.fsc.go.kr/no010101/86250
@@ -74,16 +90,109 @@
 
  
 
-    <div class="sub-feature">
-      <p class="sub-feature-label">부가 기능</p>
-      <button type="button" id="btn-go-explain" class="big-btn big-btn-sub">
-        정해진 표현 6가지 찾아보기
+ 
+    <div class="combo-entry">
+      <button type="button" id="btn-go-now" class="big-btn big-btn-primary">
+        지금 통화 중입니다
       </button>
-      <p class="sub-feature-desc">
-        받은 문자나 통화 내용을 붙여넣으면, 미리 정해진 위험 표현 6가지가
-        있는지 찾아봅니다. 판정이 아닌 참고용 부가 기능입니다.
+      <p class="combo-entry-desc">
+        다음에 무슨 말이 나올지 미리 보여드리고, 가족을 부르는 버튼을 드립니다.
+      </p>
+      <button type="button" id="btn-go-report" class="big-btn big-btn-primary">
+        신고하기
+      </button>
+      <p class="combo-entry-desc">
+        112에 문자로 신고하는 버튼과, 전화로만 되는 기관을 한자리에 모았습니다.
       </p>
     </div>
+    <div class="sub-feature">
+      <p class="sub-feature-label">부가 기능</p>
+
+ 
+
+ 
+      <button type="button" id="btn-go-call" class="big-btn big-btn-primary">
+        통화녹음 파일로 확인하기
+      </button>
+      <p class="sub-feature-desc sub-feature-desc-featured">
+        휴대전화에 저장된 통화녹음 파일을 고르면, <strong>파일을 보내지 않고
+        이 기기 안에서</strong> 내용을 글자로 받아적어 미리 정해진 위험 표현도 함께
+        찾아봅니다. 눌렀을 때만 음성인식 기능을 내려받습니다.
+      </p>
+      <button type="button" id="btn-go-img" class="big-btn big-btn-primary">
+        문자·카톡 화면 사진으로 확인하기
+      </button>
+      <p class="sub-feature-desc sub-feature-desc-featured">
+        의심스러운 문자를 <strong>복사하지 마시고 화면 사진(스크린샷)을 찍어</strong>
+        올려 주십시오. 복사하려고 문자를 길게 누르다가 링크를 잘못 누르면 나쁜 앱이
+        깔릴 수 있습니다. 사진은 <strong>이 기기 밖으로 나가지 않습니다.</strong>
+        사진 속 인터넷 주소를 저희가 가진 공식 기관 주소와 맞춰 보고, 다르면
+        대표번호를 알려드립니다.
+      </p>
+      <button type="button" id="btn-go-explain" class="big-btn big-btn-sub">
+        받은 문자를 글로 써서 확인하기
+      </button>
+      <p class="sub-feature-desc">
+        사진을 찍기 어려우면, 받은 문자나 기억나는 통화 내용을 이 화면에 직접
+        입력해서 확인할 수도 있습니다.
+      </p>
+    </div>
+    </div>
+
+      <div data-up-piece="how"></div>
+  </section>
+
+ 
+  <section id="screen-call" class="screen hidden">
+    <h2 class="explain-title">통화녹음 파일로 확인하기</h2>
+
+    <p class="input-warning" id="call-privacy-note">
+      고른 파일은 이 기기 밖으로 전송되지 않습니다. 받아적기도 이 기기 안에서
+      이루어집니다. 서버로 올리지 않으며, 저희는 파일도 내용도 보관하지 않습니다.
+    </p>
+
+    <label for="call-file" class="field-label">
+      통화녹음 파일을 고르십시오 (안드로이드는 보통 「내장 저장공간 &gt; Recordings &gt; Call」에 있습니다)
+    </label>
+ 
+    <input id="call-file" type="file"
+           accept="audio/*,.m4a,.mp4,.aac,.wav,.mp3,.amr,.3gp,.3gpp,.ogg">
+
+    <div id="call-picked" class="call-picked hidden" aria-live="polite"></div>
+
+ 
+    <fieldset id="call-range" class="call-range hidden">
+      <legend class="field-label">어느 구간을 받아적을까요</legend>
+      <label><input type="radio" name="callrange" value="head" checked> 처음 3분</label>
+      <label><input type="radio" name="callrange" value="tail"> 마지막 3분</label>
+      <label><input type="radio" name="callrange" value="both"> 처음 3분 + 마지막 3분</label>
+      <label><input type="radio" name="callrange" value="all"> 전체 (오래 걸립니다)</label>
+      <p class="sub-feature-desc" id="call-range-estimate"></p>
+    </fieldset>
+
+    <button type="button" id="btn-call-run" class="big-btn big-btn-primary hidden">
+      이 기기에서 받아적기 시작
+    </button>
+
+    <p id="call-status" class="loading-note" aria-live="polite"></p>
+    <div id="call-progress-wrap" class="call-progress-wrap hidden">
+      <div id="call-progress-bar" class="call-progress-bar" style="width:0%"></div>
+    </div>
+
+ 
+    <div id="call-transcript-wrap" class="hidden">
+      <label for="call-transcript" class="field-label">
+        받아적은 내용입니다. <strong>잘못 받아적은 곳이 있으면 고쳐 주십시오.</strong>
+      </label>
+      <textarea id="call-transcript" maxlength="2000" rows="8"></textarea>
+      <div class="char-count"><span id="call-char-count">0</span> / 2000자</div>
+      <button type="button" id="btn-call-submit" class="big-btn big-btn-primary">
+        이 내용 확인하기
+      </button>
+    </div>
+
+    <div id="call-result" aria-live="polite"></div>
+    <button type="button" id="btn-call-back" class="link-btn">처음으로</button>
   </section>
 
   
@@ -94,9 +203,8 @@
   </section>
 
  
-
   <section id="screen-explain" class="screen hidden">
-    <h2 class="explain-title">정해진 표현 6가지 찾아보기</h2>
+    <h2 class="explain-title">받은 문자를 글로 써서 확인하기</h2>
  
     <label for="explain-textarea" class="field-label">
       의심되는 문자 내용을 붙여넣으세요. 통화였다면 기억나는 내용을 그대로 적어주세요
@@ -106,18 +214,95 @@
       placeholder="예: [해외발신] 고객님 계정이 정지되었습니다..."></textarea>
     <div class="char-count"><span id="explain-char-count">0</span> / 2000자</div>
     <button type="button" id="btn-explain-submit" class="big-btn big-btn-primary">
-      정해진 표현 6가지 찾기
+      확인하기
     </button>
     <div id="explain-result" aria-live="polite"></div>
     <button type="button" id="btn-explain-back" class="link-btn">처음으로</button>
+  </section>
+
+
+ 
+  <section id="screen-now" class="screen hidden">
+    <h2 class="explain-title">지금 통화 중이라면</h2>
+ 
+    <div data-up-piece="nextLine"></div>
+    <div data-up-piece="family"></div>
+    <button type="button" id="btn-now-report" class="big-btn big-btn-primary">신고하기로 가기</button>
+    <button type="button" id="btn-now-back" class="link-btn">처음으로</button>
+  </section>
+
+ 
+  <section id="screen-report" class="screen hidden">
+    <h2 class="explain-title">신고하기</h2>
+    <div data-up-piece="police"></div>
+    <button type="button" id="btn-report-back" class="link-btn">처음으로</button>
+  </section>
+
+  <section id="screen-img" class="screen hidden">
+    <h2 class="explain-title">문자·카톡 화면 사진으로 확인하기</h2>
+
+    <p class="input-warning">
+      고른 사진은 이 기기 밖으로 전송되지 않습니다. 글자를 읽는 것도 이 기기 안에서
+      이루어집니다. 서버로 올리지 않으며, 저희는 사진도 내용도 보관하지 않습니다.
+    </p>
+
+    <p class="sub-feature-desc">
+      <strong>문자를 복사하지 마십시오.</strong> 복사하려고 길게 누르다가 링크를
+      잘못 누르면 나쁜 앱이 깔릴 수 있습니다. 화면 사진을 찍어 올리면 그럴 일이
+      없습니다. (안드로이드: 전원 + 소리작게 / 아이폰: 전원 + 소리크게)
+    </p>
+
+    <label for="img-file" class="field-label">문자·카톡 화면 사진을 고르십시오</label>
+ 
+    <input id="img-file" type="file" accept="image/*,.png,.jpg,.jpeg,.heic,.heif,.webp">
+
+    <div id="img-picked" class="call-picked hidden" aria-live="polite"></div>
+    <canvas id="img-preview" class="img-preview hidden"></canvas>
+
+    <button type="button" id="btn-img-run" class="big-btn big-btn-primary hidden">
+      이 기기에서 글자 읽기
+    </button>
+
+    <p id="img-status" class="loading-note" aria-live="polite"></p>
+    <div id="img-progress-wrap" class="call-progress-wrap hidden">
+      <div id="img-progress-bar" class="call-progress-bar" style="width:0%"></div>
+    </div>
+
+ 
+    <div id="img-text-wrap" class="hidden">
+      <label for="img-text" class="field-label">
+        사진에서 읽은 글자입니다. <strong>잘못 읽은 곳이 있으면 고쳐 주십시오.</strong>
+      </label>
+      <textarea id="img-text" maxlength="2000" rows="8"></textarea>
+      <div class="char-count"><span id="img-char-count">0</span> / 2000자</div>
+      <button type="button" id="btn-img-submit" class="big-btn big-btn-primary">
+        주소를 공식 목록과 맞춰 보고, 위험 표현도 확인하기
+      </button>
+    </div>
+
+    <div id="img-url-result" aria-live="polite"></div>
+    <div id="img-result" aria-live="polite"></div>
+    <button type="button" id="btn-img-back" class="link-btn">처음으로</button>
   </section>
 
 </main>
 
 <footer id="contacts-footer" class="contacts-footer"></footer>
 
+
 <script src="./data/classify_table.js"></script>
 <script src="./rules.js"></script>
 <script src="./app.js"></script>
+
+<script type="module" src="./call.js"></script>
+
+<script src="./official_domains.js"></script>
+<script src="./urlcheck.js"></script>
+<script src="./img.js"></script>
+<script src="./data/scam_lines.js"></script>
+<script src="./upgrade.js"></script>
+<script src="./corpus_axis.js"></script>
+<script src="./phish_similar.js"></script>
+<script src="./combo.js"></script>
 </body>
 </html>

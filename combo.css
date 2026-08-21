@@ -1,0 +1,65 @@
+
+
+
+.combo-entry {
+  margin: 28px 0 8px;
+}
+.combo-entry-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 6px 0 18px;
+}
+
+
+.combo-result-route { display: none; }
+body.on-result .combo-result-route {
+  display: block;
+  margin-top: 20px;
+}
+
+
+.combo-sim {
+  border: 1px solid #c9ced6;
+  border-radius: 6px;
+  padding: 14px 14px 10px;
+  margin: 18px 0;
+  background: #f7f8fa;
+}
+.combo-sim-head {
+  font-size: 1.15rem;
+  margin: 0 0 6px;
+}
+.combo-sim-note,
+.combo-sim-label {
+  font-size: .95rem;
+  color: #444;
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+.combo-sim-mine {
+  background: #fff;
+  border: 1px solid #dfe3e8;
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin: 8px 0 12px;
+}
+.combo-sim-sentence {
+  line-height: 1.7;
+  margin: 0;
+}
+.combo-sim-card {
+  background: #fff;
+  border: 1px solid #c9ced6;
+  border-left-width: 6px;
+  border-left-color: #8a6d1f;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.combo-sim-score { font-weight: 700; margin: 0 0 4px; }
+.combo-sim-type { margin: 0 0 6px; color: #333; }
+.combo-sim-body { line-height: 1.65; margin: 0 0 6px; }
+.combo-sim-src { font-size: .9rem; color: #555; margin: 0; word-break: break-all; }
+.combo-sim-none { line-height: 1.65; margin: 6px 0 0; }
+.combo-sim-warn { line-height: 1.65; margin: 10px 0 0; color: #5a3a00; }
